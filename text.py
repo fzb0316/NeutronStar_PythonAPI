@@ -3,6 +3,7 @@ import GCN_CPU
 import GIN_CPU
 import GCN
 import GIN
+import COMMNET
 
 from datetime import datetime
 cfgFile = input('please input the cfgFile name: ')
@@ -40,7 +41,11 @@ elif(graph.config.algorithm == "GINGPU"):
     ntsGIN._init_graph()
     ntsGIN._init_nn()
     ntsGIN._run()
-
+elif(graph.config.algorithm == "COMMNETGPU"):
+    ntsCOMMNET = COMMNET.COMMNET(graph, iterations, False, False)
+    ntsCOMMNET._init_graph()
+    ntsCOMMNET._init_nn()
+    ntsCOMMNET._run()
 
 after_init = datetime.now()
 
