@@ -1,14 +1,13 @@
 import Graph
 import GCN_CPU
+import GIN_CPU
+from datetime import datetime
+cfgFile = input('please input the cfgFile name: ')
 
-print("import finish")
-
+start = datetime.now() 
 graph = Graph.Graph()
 
-print("after init Graph")
-
-graph.config._readFromCfgFile("gcn_cora.cfg")
-
+graph.config._readFromCfgFile(cfgFile)
 if(graph.partition_id == 0):
     graph.config._print()
 
@@ -16,16 +15,23 @@ graph.replication_threshold = graph.config.repthreshold
 graph.load_directed(graph.config.edge_file, graph.config.vertices)
 
 graph.generate_backward_structure()
-
 iterations = graph.config.epochs
 
-print("after init Graph")
+if(graph.config.algorithm == "GCNCPU"):
+    ntsGCN = GCN_CPU.GCN_CPU(graph, iterations, False, False)
+    ntsGCN._init_graph()
+    ntsGCN._init_nn()
+    ntsGCN._run()
+elif(graph.config.algorithm == "GINCPU"):
+    ntsGIN = GIN_CPU.GIN_CPU(graph, iterations, False, False)
+    ntsGIN._init_graph()
+    ntsGIN._init_nn()
+    ntsGIN._run()
 
-ntsGCN = GCN_CPU.GCN_CPU(graph, iterations, False, False)
+after_init = datetime.now()
 
-ntsGCN._init_graph()
-ntsGCN._init_nn()
-ntsGCN._run()
+end = datetime.now()
 
-print("GCN FINISHED!!!!!!!!!!!!!!!!")
-
+print(start)
+print(after_init)
+print(end)
