@@ -1,6 +1,8 @@
 import Graph
 import GCN_CPU
 import GIN_CPU
+import GCN
+
 from datetime import datetime
 cfgFile = input('please input the cfgFile name: ')
 
@@ -24,6 +26,11 @@ if(graph.config.algorithm == "GCNCPU"):
     ntsGCN._run()
 elif(graph.config.algorithm == "GINCPU"):
     ntsGIN = GIN_CPU.GIN_CPU(graph, iterations, False, False)
+    ntsGIN._init_graph()
+    ntsGIN._init_nn()
+    ntsGIN._run()
+elif(graph.config.algorithm == "GCN"):
+    ntsGIN = GCN.GCN(graph, iterations, False, False)
     ntsGIN._init_graph()
     ntsGIN._init_nn()
     ntsGIN._run()
