@@ -1,10 +1,31 @@
 #include "core/graph.hpp"
-
+#include "core/AutoDiff.h"
+#include "core/gnnmini.h"
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
 
 PYBIND11_MODULE(Graph, m) {
+
+     m.def("get_time", &get_time, "get the time of system");
+
+     py::class_<GraphOperation>(m, "Graph_Operation")
+        .def(py::init([](Graph<Empty> *graph_, VertexSubset* active)
+               {return new GraphOperation(graph_, active); }))
+               
+        .def("PropagateForwardCPU_Lockfree_multisockets", &GraphOperation::PropagateForwardCPU_Lockfree_multisockets, 
+            "gather neithbour's vertex feature, the intermediate value is stored in Y", 
+            py::arg("X"), py::arg("Y"), py::arg("subgraphs"));
+
+
+     py::class_<nts::autodiff::ComputionPath>(m, "ComputionPath")
+        .def(py::init([](GraphOperation *gt_, std::vector<CSC_segment_pinned *> subgraphs_)
+               {return new nts::autodiff::ComputionPath(gt_, subgraphs_); }))
+        
+        .def("op_push", &nts::autodiff::ComputionPath::op_push, 
+            "push the operation and intermediate result into ComputationPath, for backward propagation")
+        .def("self_backward", &nts::autodiff::ComputionPath::self_backward,
+            "do the backward propagation using the value that we stored while doing forward computation");
 
      py::class_<InputInfo> (m, "InputInfo")
           .def(py::init<>())
