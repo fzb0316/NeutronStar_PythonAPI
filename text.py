@@ -4,8 +4,10 @@ import GIN_CPU
 import GCN
 import GIN
 import COMMNET
+import GGNN_CPU
 
 from datetime import datetime
+
 cfgFile = input('please input the cfgFile name: ')
 
 start = datetime.now() 
@@ -46,11 +48,11 @@ elif(graph.config.algorithm == "COMMNETGPU"):
     ntsCOMMNET._init_graph()
     ntsCOMMNET._init_nn()
     ntsCOMMNET._run()
-
-after_init = datetime.now()
-
+elif(graph.config.algorithm == "GGNNCPU"):
+    ntsGGNN_CPU = GGNN_CPU.GGNN_CPU(graph, iterations, False, False)
+    ntsGGNN_CPU._init_graph()
+    ntsGGNN_CPU._init_nn()
+    ntsGGNN_CPU._run()
 end = datetime.now()
 
-print(start)
-print(after_init)
-print(end)
+print(end-start)
