@@ -7,19 +7,6 @@ import COMMNET
 import GGNN_CPU
 from datetime import datetime
 
-def Forward(nts):
-    nts.graph.rtminfo.forward = True
-    num = nts.get_layersize()
-    i = 0
-    for i in range(num):
-        nts.graph.rtminfo.curr_layer = i
-        if(i != 0):
-            nts.X[i] = nts.drpmodel(nts.X[i])
-        nts.gt.PropagateForwardCPU_Lockfree_multisockets(nts.X[i], nts.Y[i],nts.subgraphs)
-        nts.cp.op_push(nts.X[i], nts.Y[i], 1)
-        nts.X[i] = nts._vertexForward(nts.Y[i], nts.X[i])
-
-
 def run_gnn(nts):
     if(nts.graph.partition_id == 0):
         print("GNNmini::[Dist.GPU.GCNimpl] running [%d] Epoches\n" % nts.iterations)
@@ -32,7 +19,6 @@ def run_gnn(nts):
         if(i != 0):
             nts.clear_gradient(i)
         nts._Forward()
-        #Forward(nts)
         nts._Test(0)
         nts._Test(1)
         nts._Test(2)
